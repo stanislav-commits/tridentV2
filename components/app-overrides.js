@@ -8,6 +8,241 @@
     children
   );
 
+  const emptyVesselSections = new Set(['assets', 'alerts', 'certificates', 'metrics', 'kb', 'pms', 'finance', 'users']);
+
+  const readText = node => {
+    if (node === null || node === undefined || typeof node === 'boolean') return '';
+    if (typeof node === 'string' || typeof node === 'number') return String(node);
+    if (Array.isArray(node)) return node.map(readText).join('');
+    if (React.isValidElement(node)) return readText(node.props.children);
+    return '';
+  };
+
+  const stripAssetRegisterExtras = node => {
+    if (!React.isValidElement(node)) return node;
+    const text = readText(node.props.children);
+    const className = node.props.className || '';
+    if (node.type === 'button' && text.includes('Logic spec')) return null;
+    if (node.type === 'button' && node.props.title === 'Open full page' && className.includes('btn-ghost')) return null;
+    const children = React.Children.map(node.props.children, stripAssetRegisterExtras) || [];
+    return React.cloneElement(node, undefined, ...children.filter(child => child !== null));
+  };
+
+  const OriginalAssetRegisterPage = window.AssetRegisterPage;
+  if (OriginalAssetRegisterPage) {
+    window.AssetRegisterPage = function AssetRegisterPageOverride(props) {
+      return stripAssetRegisterExtras(OriginalAssetRegisterPage(props));
+    };
+  }
+
+  const VesselField = ({ label, children }) => h('label', { className: 'field' },
+    h('span', { className: 'field-label' }, label),
+    children
+  );
+
+  const VesselOnboardingModal = ({ onClose, onCreate }) => {
+    const awsOrgs = [
+      'aws-prod-seawolfx-metrics',
+      'aws-med-yacht-ops',
+      'aws-charter-fleet-live',
+      'aws-newbuild-commissioning',
+    ];
+    const [draft, setDraft] = useState({
+      name: '',
+      organization: awsOrgs[0],
+      imo: '',
+      mmsi: '',
+      callSign: '',
+      flag: '',
+      length: '',
+      buildYear: '',
+      shipyard: '',
+      classSociety: '',
+      homePort: '',
+      metricsBucket: '',
+      managerEmail: '',
+    });
+    const setField = (field, value) => setDraft(prev => Object.assign({}, prev, { [field]: value }));
+    return h('div', { className: 'modal-overlay', onClick: onClose },
+      h('div', { className: 'modal modal-vessel', onClick: event => event.stopPropagation() },
+        h('div', { className: 'modal-head' },
+          h('div', { className: 'modal-icon' }, h(Icon, { name: 'ship', size: 16 })),
+          h('div', null,
+            h('div', { className: 'modal-title' }, 'Add vessel workspace'),
+            h('div', { className: 'modal-sub' }, 'Create an empty yacht profile and connect it to the AWS organization that stores live metrics.')
+          ),
+          h('button', { className: 'modal-close', onClick: onClose }, 'x')
+        ),
+        h('div', { className: 'modal-body vessel-form-grid' },
+          h(VesselField, { label: 'Vessel / group name' }, h('input', { className: 'input', value: draft.name, onChange: event => setField('name', event.target.value), placeholder: 'Project Atlas', autoFocus: true })),
+          h(VesselField, { label: 'AWS organization' }, h('select', { className: 'input', value: draft.organization, onChange: event => setField('organization', event.target.value) }, awsOrgs.map(org => h('option', { key: org }, org)))),
+          h(VesselField, { label: 'IMO' }, h('input', { className: 'input', value: draft.imo, onChange: event => setField('imo', event.target.value), placeholder: 'pending' })),
+          h(VesselField, { label: 'MMSI' }, h('input', { className: 'input', value: draft.mmsi, onChange: event => setField('mmsi', event.target.value), placeholder: '319000000' })),
+          h(VesselField, { label: 'Call sign' }, h('input', { className: 'input', value: draft.callSign, onChange: event => setField('callSign', event.target.value), placeholder: 'ZCXA7' })),
+          h(VesselField, { label: 'Flag' }, h('input', { className: 'input', value: draft.flag, onChange: event => setField('flag', event.target.value), placeholder: 'Cayman Islands' })),
+          h(VesselField, { label: 'Length, m' }, h('input', { className: 'input', value: draft.length, onChange: event => setField('length', event.target.value), placeholder: '52.4' })),
+          h(VesselField, { label: 'Build year' }, h('input', { className: 'input', value: draft.buildYear, onChange: event => setField('buildYear', event.target.value), placeholder: '2026' })),
+          h(VesselField, { label: 'Shipyard' }, h('input', { className: 'input', value: draft.shipyard, onChange: event => setField('shipyard', event.target.value), placeholder: 'Lurssen' })),
+          h(VesselField, { label: 'Class society' }, h('input', { className: 'input', value: draft.classSociety, onChange: event => setField('classSociety', event.target.value), placeholder: "Lloyd's Register" })),
+          h(VesselField, { label: 'Home port' }, h('input', { className: 'input', value: draft.homePort, onChange: event => setField('homePort', event.target.value), placeholder: 'George Town' })),
+          h(VesselField, { label: 'Metrics bucket' }, h('input', { className: 'input', value: draft.metricsBucket, onChange: event => setField('metricsBucket', event.target.value), placeholder: 'nmea/project-atlas/live' })),
+          h(VesselField, { label: 'Fleet manager email' }, h('input', { className: 'input', value: draft.managerEmail, onChange: event => setField('managerEmail', event.target.value), placeholder: 'manager@example.com' })),
+          h('div', { className: 'vessel-empty-note' },
+            h('strong', null, 'New vessel starts empty.'),
+            h('span', null, 'Asset Register, certificates, metrics, manuals, PMS, accounting and crew users will show zero records until imports are uploaded.')
+          )
+        ),
+        h('div', { className: 'modal-foot' },
+          h('button', { className: 'btn', onClick: onClose }, 'Cancel'),
+          h('button', { className: 'btn btn-primary', onClick: () => onCreate(draft) }, h(Icon, { name: 'plus', size: 13 }), 'Create vessel')
+        )
+      )
+    );
+  };
+
+  const EmptyVesselPage = ({ active, vessel }) => {
+    const config = {
+      assets: ['Asset Register', 'Import the SFI hierarchy or add the first asset manually.', 'Import asset register', 'Add first asset'],
+      alerts: ['Alerts', 'No telemetry rules are configured yet.', 'Create alert rule', 'Connect metrics'],
+      certificates: ['Certificates', 'Upload the vessel certificate list with issue and expiry dates.', 'Upload certificates', 'Add certificate'],
+      metrics: ['Metrics catalog', 'Connect the AWS organization and map live metric names to SFI assets.', 'Connect AWS metrics', 'Import mapping'],
+      kb: ['Knowledge Base', 'Upload manuals, SOPs and procedures for this vessel.', 'Upload documents', 'Auto-categorize'],
+      pms: ['Planned Maintenance', 'Import the existing PMS export and map tasks back to Asset Register.', 'Import PMS', 'New task'],
+      finance: ['Accounting', 'Import the first monthly finance workbook for this vessel.', 'Import finance xlsx', 'Add invoice'],
+      users: ['Crew users', 'Invite crew after the vessel profile is ready.', 'Invite crew user', 'Import crew list'],
+    }[active] || ['New vessel', 'This section is empty for the new vessel.', 'Start import', 'Add record'];
+    return h('div', { className: 'page empty-vessel-page' },
+      h('div', { className: 'page-header' },
+        h('div', null,
+          h('h1', { className: 'page-title' }, config[0]),
+          h('p', { className: 'page-subtitle' }, vessel.name, ' is a fresh vessel workspace. ', config[1])
+        )
+      ),
+      h('div', { className: 'empty-vessel-card' },
+        h('div', { className: 'empty-vessel-icon' }, h(Icon, { name: 'ship', size: 22 })),
+        h('div', null,
+          h('h2', null, '0 records loaded'),
+          h('p', null, 'All vessel data and people sections are intentionally blank for this new yacht. Load source files from the vessel to populate the admin panel.')
+        ),
+        h('div', { className: 'empty-vessel-actions' },
+          h('button', { className: 'btn btn-primary' }, h(Icon, { name: 'upload', size: 13 }), config[2]),
+          h('button', { className: 'btn' }, h(Icon, { name: 'plus', size: 13 }), config[3])
+        )
+      ),
+      h('div', { className: 'empty-vessel-meta' },
+        h('div', null, h('span', null, 'AWS organization'), h('strong', null, vessel.organization || 'Not selected')),
+        h('div', null, h('span', null, 'Metrics bucket'), h('strong', null, vessel.metricsBucket || 'Pending')),
+        h('div', null, h('span', null, 'Class society'), h('strong', null, vessel.classSociety || 'Pending')),
+        h('div', null, h('span', null, 'Home port'), h('strong', null, vessel.homePort || 'Pending'))
+      )
+    );
+  };
+
+  window.AdminShell = function AdminShell({ active, setActive, children, setMode, vessel, setVessel }) {
+    const initialVessels = [
+      { name: 'Sea Wolf X', meta: 'IMO 1234567 · 52.4 m · 2018' },
+      { name: 'Aquila One', meta: 'IMO 7654321 · 47.8 m · 2021' },
+      { name: 'Odyssey Blue', meta: 'IMO 8844210 · 61.2 m · 2020' },
+    ];
+    const [vessels, setVessels] = useState(initialVessels);
+    const [shipMenuOpen, setShipMenuOpen] = useState(false);
+    const [vesselModalOpen, setVesselModalOpen] = useState(false);
+    const activeVessel = vessel || vessels[0];
+    const showEmptyWorkspace = activeVessel.empty && emptyVesselSections.has(active);
+    const addVessel = event => {
+      event.stopPropagation();
+      setShipMenuOpen(false);
+      setVesselModalOpen(true);
+    };
+    const createVessel = draft => {
+      const name = draft.name.trim() || `New Vessel ${vessels.length + 1}`;
+      const length = draft.length.trim();
+      const buildYear = draft.buildYear.trim();
+      const imo = draft.imo.trim();
+      const next = Object.assign({}, draft, {
+        name,
+        meta: `IMO ${imo || 'pending'} · ${length || '-'} m · ${buildYear || '-'}`,
+        empty: true,
+        createdAt: 'just now',
+      });
+      setVessels(prev => prev.concat(next));
+      if (setVessel) setVessel(next);
+      setActive('assets');
+      setVesselModalOpen(false);
+    };
+    const navItems = [
+      { group: 'Vessel data', items: [
+        { id: 'assets', label: 'Asset Register', icon: 'asset', badge: '2.2k' },
+        { id: 'alerts', label: 'Alerts', icon: 'alert', badge: 3 },
+        { id: 'certificates', label: 'Certificates', icon: 'doc', badge: 181 },
+        { id: 'metrics', label: 'Metrics catalog', icon: 'metrics', badge: '1.2k' },
+        { id: 'kb', label: 'Knowledge Base', icon: 'kb', badge: 172 },
+        { id: 'pms', label: 'PMS', icon: 'pms', badge: 18 },
+        { id: 'finance', label: 'Accounting', icon: 'finance' },
+      ] },
+      { group: 'People', items: [
+        { id: 'users', label: 'Crew users', icon: 'users' },
+      ] },
+      { group: 'Platform', items: [
+        { id: 'adminUsers', label: 'Admin users', icon: 'users' },
+        { id: 'fleetManagers', label: 'Fleet managers', icon: 'users' },
+        { id: 'rag', label: 'RAG / AI settings', icon: 'rag' },
+      ] },
+    ];
+    const renderedChildren = showEmptyWorkspace
+      ? React.Children.map(children, child => child && child.props && child.props.className === 'content'
+        ? h('div', { className: 'content' }, h(EmptyVesselPage, { active, vessel: activeVessel }))
+        : child)
+      : children;
+    return h('div', { className: 'app' },
+      h('aside', { className: 'sidebar' },
+        h('div', { className: 'sb-brand' },
+          h('div', { className: 'sb-brand-mark' },
+            h('img', { className: 'sb-brand-logo', src: 'assets/trident-virtual-mark.png', alt: 'Trident Virtual mark' })
+          ),
+          h('div', null,
+            h('div', { className: 'sb-brand-text' }, 'Trident', h('br'), 'Intelligence', h('br'), 'Platform'),
+            h('div', { className: 'sb-brand-sub' }, 'Admin Panel')
+          )
+        ),
+        h('div', { className: `sb-ship ${shipMenuOpen ? 'open' : ''}`, onClick: () => setShipMenuOpen(open => !open) },
+          h('div', { className: 'sb-ship-label' }, 'Active Vessel'),
+          h('div', { className: 'sb-ship-name' }, activeVessel.name, h(Icon, { name: 'chevron-down', size: 14 })),
+          h('div', { className: 'sb-ship-meta' }, activeVessel.meta),
+          shipMenuOpen && h('div', { className: 'sb-ship-dropdown', onClick: event => event.stopPropagation() },
+            h('div', { className: 'sb-ship-dropdown-title' }, 'Yachts'),
+            vessels.map(option => h('button', {
+              key: option.name,
+              className: `vessel-option ${activeVessel.name === option.name ? 'active' : ''}`,
+              onClick: () => { if (setVessel) setVessel(option); setShipMenuOpen(false); },
+            }, h('span', null, option.name), h('small', null, option.meta))),
+            h('button', { className: 'vessel-add-btn', onClick: addVessel }, h(Icon, { name: 'plus', size: 13 }), 'Add vessel')
+          )
+        ),
+        h('nav', { className: 'sb-nav' },
+          navItems.map(group => h('div', { className: 'sb-section', key: group.group },
+            h('div', { className: 'sb-section-title' }, group.group),
+            group.items.map(item => {
+              const badge = activeVessel.empty && emptyVesselSections.has(item.id) ? null : item.badge;
+              return h('div', {
+                key: item.id,
+                className: `sb-link ${active === item.id ? 'active' : ''}`,
+                onClick: () => setActive(item.id),
+              }, h(Icon, { name: item.icon, size: 15 }), h('span', null, item.label), badge && h('span', { className: 'sb-badge' }, badge));
+            })
+          ))
+        ),
+        h('div', { className: 'sb-foot' },
+          h('div', { className: 'sb-link', onClick: () => setMode('user') },
+            h(Icon, { name: 'chevron-left', size: 14 }), h('span', null, 'Back to app')
+          )
+        )
+      ),
+      h('main', { className: 'main' }, renderedChildren),
+      vesselModalOpen && h(VesselOnboardingModal, { onClose: () => setVesselModalOpen(false), onCreate: createVessel })
+    );
+  };
+
   const ImportModal = ({ kind, onClose }) => {
     const config = {
       pms: {

@@ -56,7 +56,6 @@ window.AssetRegisterPage = function AssetRegisterPage() {
             <span className={`toggle-opt ${view === 'split' ? 'active' : ''}`} onClick={() => setView('split')}>Split</span>
             <span className={`toggle-opt ${view === 'full' ? 'active' : ''}`} onClick={() => setView('full')}>Full page</span>
           </div>
-          <button className="btn" onClick={() => setModal('logic')}><Icon name="audit" size={13} /> Logic spec</button>
           <button className="btn" onClick={() => setModal('import')}><Icon name="upload" size={13} /> Import xlsx</button>
           <button className="btn" onClick={() => setModal('link')}><Icon name="link" size={13} /> Bulk link manuals</button>
           <button className="btn"><Icon name="download" size={13} /> Export</button>
@@ -145,9 +144,6 @@ window.AssetRegisterPage = function AssetRegisterPage() {
                   {asset.status === 'operational' && <span className="pill pill-ok"><span className="dot dot-ok" /> Operational</span>}
                   {asset.status === 'maintenance' && <span className="pill pill-warn">In maintenance</span>}
                   {asset.status === 'fault' && <span className="pill pill-danger"><span className="dot dot-danger" /> Fault</span>}
-                  <button className="btn btn-sm btn-ghost" style={{marginLeft: 'auto'}} onClick={() => setView('full')} title="Open full page">
-                    <Icon name="arrow-up-right" size={12} />
-                  </button>
                 </div>
                 <div style={{fontSize: 15, fontWeight: 600, marginBottom: 6}}>{asset.name}</div>
                 <div className="text-3" style={{fontSize: 12}}>{asset.mfr} · {asset.model} · S/N {asset.serial}</div>
