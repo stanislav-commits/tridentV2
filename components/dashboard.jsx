@@ -147,7 +147,7 @@ window.DashboardPage = function DashboardPage() {
           <div className="card-body" style={{padding: 0}}>
             {[
               { q: 'are there any active bilge alarms right now?', user: 'Jogn S.', t: '2m', src: ['NMEA live', '08.1 Fire'], ok: true },
-              { q: 'how many running hours has port generator?', user: 'Jogn S.', t: '14m', src: ['NMEA live', '03.1 Engines'], ok: true },
+              { q: 'how many running hours has port generator?', user: 'Jogn S.', t: '14m', src: ['NMEA live', '02.1 Engines'], ok: true },
               { q: 'what is the bilge level in tanks?', user: 'Jogn S.', t: '32m', src: ['NMEA live'], ok: true },
               { q: 'when does the SOLAS cert expire?', user: 'M. Aliyev', t: '1h', src: ['CERT_SOLAS_2026.pdf'], ok: true },
               { q: 'what oil for MTU 16V', user: 'M. Aliyev', t: '2h', src: ['MN_MTU_16V.pdf'], ok: true },
@@ -174,7 +174,7 @@ window.DashboardPage = function DashboardPage() {
               { who: 'System', what: 'Indexed MN_VolvoPenta_D5A_v3.pdf — 453 chunks', when: '38m ago', icon: 'kb' },
               { who: 'Capt. Aliyev', what: 'Closed PMS task #2018 — Oil filter Generator 1', when: '2h ago', icon: 'pms' },
               { who: 'System', what: 'Auto-mapped 24 new metrics from NMEA', when: '4h ago', icon: 'metrics' },
-              { who: 'Stanislav', what: 'Linked 12 manuals to SFI 03.1', when: 'yesterday', icon: 'link' },
+              { who: 'Stanislav', what: 'Linked 12 manuals to SFI 02.1', when: 'yesterday', icon: 'link' },
             ].map((a, i) => (
               <div key={i} style={{padding: '10px 16px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 10, fontSize: 12.5}}>
                 <div style={{width: 26, height: 26, background: 'var(--bg-3)', borderRadius: 5, display: 'grid', placeItems: 'center', color: 'var(--text-2)'}}><Icon name={a.icon} size={13} /></div>

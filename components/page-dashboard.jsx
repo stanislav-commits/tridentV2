@@ -55,7 +55,7 @@ window.PageDashboard = function PageDashboard() {
             <button className="btn btn-ghost btn-sm" style={{marginLeft:'auto'}}>View all</button>
           </div>
           <div style={{padding:'4px 0'}}>
-            <MiniAlert level="danger" code="03.1.010" msg="Engine Mount — Stbd AFT vibration over threshold" time="04:12" />
+            <MiniAlert level="danger" code="02.1.010" msg="Engine Mount — Stbd AFT vibration over threshold" time="04:12" />
             <MiniAlert level="warn" code="04.4.003" msg="Bilge level — Engine Room exceeding daily avg" time="03:48" />
             <MiniAlert level="warn" code="07.1.001" msg="Watermaker pre-filter pressure rising" time="01:22" />
             <MiniAlert level="info" code="08.1" msg="Fire Detection self-test completed" time="00:00" />

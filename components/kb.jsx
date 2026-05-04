@@ -8,15 +8,14 @@ window.KnowledgeBasePage = function KnowledgeBasePage() {
     { id: 'all', name: 'All documents', icon: 'kb', count: 172 },
     { id: 'manuals', name: 'Manuals', icon: 'doc', count: 92 },
     { id: 'history', name: 'History & Procedures', icon: 'history', count: 34 },
-    { id: 'certificates', name: 'Certificates', icon: 'shield-check', count: 28 },
     { id: 'regulation', name: 'Regulation & ISM', icon: 'compliance', count: 18 },
     { id: 'sop', name: 'SOPs', icon: 'doc', count: 12 },
     { id: 'marpol', name: 'MARPOL', icon: 'compliance', count: 8 },
   ];
   const docs = [
-    { name: 'MN_MTU_16V_4000_Operating.pdf', sfi: '03.1.001', tags: ['Engines', 'MTU'], status: 'done', chunks: 412, size: '14.2 MB', date: '12 Mar 2026' },
-    { name: 'MN_VolvoPenta_D5A_v3.pdf', sfi: '03.1.005', tags: ['Generator', 'Volvo'], status: 'done', chunks: 453, size: '18.8 MB', date: '21 Apr 2026' },
-    { name: 'MN_MASE_IS44_rev2.pdf', sfi: '03.1.003', tags: ['Generator', 'MASE'], status: 'parsing', chunks: null, size: '9.4 MB', date: '28 Apr 2026', progress: 38 },
+    { name: 'MN_MTU_16V_4000_Operating.pdf', sfi: '02.1.001', tags: ['Engines', 'MTU'], status: 'done', chunks: 412, size: '14.2 MB', date: '12 Mar 2026' },
+    { name: 'MN_VolvoPenta_D5A_v3.pdf', sfi: '02.1.005', tags: ['Generator', 'Volvo'], status: 'done', chunks: 453, size: '18.8 MB', date: '21 Apr 2026' },
+    { name: 'MN_MASE_IS44_rev2.pdf', sfi: '02.1.003', tags: ['Generator', 'MASE'], status: 'parsing', chunks: null, size: '9.4 MB', date: '28 Apr 2026', progress: 38 },
     { name: 'MN_MACB531 (3).pdf', sfi: '05.1', tags: ['Battery'], status: 'done', chunks: 85, size: '3.1 MB', date: '09 Apr 2026' },
     { name: 'MN_IN-PQ-FQ (2).pdf', sfi: '04.1', tags: ['Fuel'], status: 'done', chunks: 47, size: '2.4 MB', date: '09 Apr 2026' },
     { name: 'MN_HANDPUMP (2).pdf', sfi: '04.4', tags: ['Bilge'], status: 'done', chunks: 12, size: '0.6 MB', date: '09 Apr 2026' },
@@ -94,7 +93,6 @@ window.KnowledgeBasePage = function KnowledgeBasePage() {
               <span style={{fontSize: 12.5}}><strong>{selected.size}</strong> selected</span>
               <span style={{flex: 1}} />
               <button className="btn btn-sm"><Icon name="link" size={12} /> Link to SFI…</button>
-              <button className="btn btn-sm"><Icon name="tag" size={12} /> Add tags</button>
               <button className="btn btn-sm"><Icon name="rag" size={12} /> Re-index</button>
               <button className="btn btn-sm"><Icon name="download" size={12} /> Download</button>
               <button className="btn btn-sm btn-danger"><Icon name="trash" size={12} /> Delete</button>
@@ -122,7 +120,6 @@ window.KnowledgeBasePage = function KnowledgeBasePage() {
                   </th>
                   <th>Filename</th>
                   <th style={{width: 120}}>SFI link</th>
-                  <th style={{width: 130}}>Tags</th>
                   <th style={{width: 120}}>RAG status</th>
                   <th style={{width: 100}}>Uploaded</th>
                   <th style={{width: 110, textAlign: 'right'}}>Actions</th>
@@ -144,11 +141,6 @@ window.KnowledgeBasePage = function KnowledgeBasePage() {
                       {d.sfi
                         ? <span className="pill mono">{d.sfi}</span>
                         : <button className="btn btn-sm btn-ghost" style={{padding: '2px 8px', fontSize: 11}}><Icon name="link" size={10} /> Link</button>}
-                    </td>
-                    <td>
-                      <div className="row" style={{gap: 4, flexWrap: 'wrap'}}>
-                        {d.tags.map(t => <span key={t} className="tag-soft">{t}</span>)}
-                      </div>
                     </td>
                     <td>
                       {d.status === 'done' && <span className="pill pill-ok">{d.chunks} CHUNKS</span>}

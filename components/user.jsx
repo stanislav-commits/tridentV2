@@ -2,11 +2,7 @@
 const { useState: usU, useRef: urU, useEffect: ueU } = React;
 
 window.UserShell = function UserShell({ tab, setTab, setMode, children }) {
-  const tabs = [
-    { id: 'chat', label: 'Chat', icon: 'chat' },
-    { id: 'alerts', label: 'Alerts', icon: 'alert', badge: 3 },
-    { id: 'pms', label: 'My tasks', icon: 'pms', badge: 4 },
-  ];
+  const [showTaskPanel, setShowTaskPanel] = usU(false);
   const recents = [
     'are there any active bilge alarms right now?',
     'how many running hours has port generator?',
@@ -17,6 +13,47 @@ window.UserShell = function UserShell({ tab, setTab, setMode, children }) {
     'PMS schedule for next week',
     'list overdue maintenance tasks',
   ];
+  const taskDays = new Set([1, 2, 3, 4, 7, 12, 15, 27]);
+  const taskList = [
+    { day: '04', title: '500h Service — ME Port', meta: 'Overdue · SFI 02.1.001', tone: 'danger' },
+    { day: '04', title: 'Watermaker membrane flush', meta: 'Overdue · SFI 07.1.001', tone: 'danger' },
+    { day: '07', title: 'Oil filter change — Gen 1', meta: 'Due this week · SFI 02.1.003', tone: 'warn' },
+    { day: '12', title: 'SOLAS certificate review', meta: 'Certificate expiry reminder', tone: 'warn' },
+  ];
+  const openTasks = () => {
+    setTab('pms');
+    setShowTaskPanel(false);
+  };
+  const taskCalendar = (
+    <div className="user-calendar">
+      <div className="user-calendar-head">
+        <div>
+          <span>My tasks</span>
+          <strong>May 2026</strong>
+        </div>
+        <button className="calendar-count" onClick={openTasks}>4</button>
+      </div>
+      <div className="user-calendar-week">
+        {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, index) => <span key={`${day}-${index}`}>{day}</span>)}
+      </div>
+      <div className="user-calendar-grid">
+        {Array.from({length: 31}, (_, index) => index + 1).map(day => (
+          <button key={day} className={`${day === 4 ? 'today ' : ''}${taskDays.has(day) ? 'has-task' : ''}`} onClick={openTasks}>
+            <span>{day}</span>
+            {taskDays.has(day) && <i />}
+          </button>
+        ))}
+      </div>
+      <div className="user-calendar-list">
+        {taskList.map(task => (
+          <button key={`${task.day}-${task.title}`} className={`user-side-task ${task.tone}`} onClick={openTasks}>
+            <span className="task-date">{task.day}</span>
+            <span className="task-copy"><strong>{task.title}</strong><small>{task.meta}</small></span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
   return (
     <div className="user-shell">
       <aside className="user-aside">
@@ -24,9 +61,9 @@ window.UserShell = function UserShell({ tab, setTab, setMode, children }) {
           <div className="sb-brand-mark">
             <img className="sb-brand-logo" src="assets/trident-virtual-mark.png" alt="Trident Virtual mark" />
           </div>
-          <div>
-            <div style={{fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase'}}>Trident</div>
-            <div style={{fontSize: 10, color: 'var(--text-3)', letterSpacing: '0.16em'}}>SEA WOLF X</div>
+          <div className="user-brand-stack">
+            <div className="user-brand-title">Trident<br/>Intelligence<br/>Platform</div>
+            <div className="user-brand-sub">Sea Wolf X</div>
           </div>
           <button className="btn btn-sm btn-ghost" style={{marginLeft: 'auto', padding: 6}} title="New chat"><Icon name="plus" size={14} /></button>
         </div>
@@ -39,7 +76,7 @@ window.UserShell = function UserShell({ tab, setTab, setMode, children }) {
         </div>
         <div className="chat-list">
           {recents.map((r, i) => (
-            <div key={i} className={`chat-item ${i === 0 ? 'active' : ''}`}>{r}</div>
+            <div key={i} className={`chat-item ${i === 0 ? 'active' : ''}`} onClick={() => setTab('chat')}>{r}</div>
           ))}
         </div>
         <div className="user-foot">
@@ -56,19 +93,31 @@ window.UserShell = function UserShell({ tab, setTab, setMode, children }) {
       </aside>
       <main className="user-main">
         <div className="user-tabs">
-          {tabs.map(t => (
-            <div key={t.id} className={`user-tab ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
-              <Icon name={t.icon} size={14} />
-              <span>{t.label}</span>
-              {t.badge && <span className="tab-badge">{t.badge}</span>}
-            </div>
-          ))}
           <div style={{flex: 1}} />
-          <button className="btn btn-sm btn-ghost"><Icon name="bell" size={13} /></button>
-          <div className="avatar" style={{width: 28, height: 28, fontSize: 11, marginLeft: 8}}>J</div>
+          <div className="user-top-actions">
+            <button className="btn btn-sm btn-ghost user-notify user-task-trigger" title="My tasks" onClick={() => setShowTaskPanel(open => !open)}>
+              <Icon name="pms" size={13} />
+              <span className="user-notify-badge">4</span>
+            </button>
+            <button className="btn btn-sm btn-ghost user-notify" title="Notifications"><Icon name="bell" size={13} /></button>
+            <div className="avatar user-avatar">J</div>
+          </div>
         </div>
         {children}
       </main>
+      {showTaskPanel && <div className="user-task-scrim" onClick={() => setShowTaskPanel(false)} />}
+      {showTaskPanel && (
+        <aside className="user-task-drawer">
+          <div className="user-task-panel-head">
+            <div>
+              <span>Task calendar</span>
+              <strong>My tasks</strong>
+            </div>
+            <button className="modal-close" onClick={() => setShowTaskPanel(false)}>x</button>
+          </div>
+          {taskCalendar}
+        </aside>
+      )}
     </div>
   );
 };
@@ -88,8 +137,8 @@ window.UserChat = function UserChat() {
     ]},
     { role: 'user', text: 'show me running hours for both main engines' },
     { role: 'assistant', text: 'Both main engines are running normally. Port has 4,218 h logged, Starboard 4,231 h. Next scheduled service for Port at 4,500 h (≈11 days at current usage).', sources: [
-      { name: 'SFI 03.1.001 — ME Port', kind: 'asset' },
-      { name: 'SFI 03.1.002 — ME Stbd', kind: 'asset' },
+      { name: 'SFI 02.1.001 — ME Port', kind: 'asset' },
+      { name: 'SFI 02.1.002 — ME Stbd', kind: 'asset' },
       { name: 'PMS task · 500h Service', kind: 'pms' },
     ]},
   ]);
@@ -184,9 +233,9 @@ function AssistantBubble({ m }) {
 
 window.UserAlerts = function UserAlerts() {
   const list = [
-    { sev: 'danger', src: '03.1.010', title: 'Engine Mount Stbd AFT — vibration above threshold', body: '8.2 mm/s observed at 14:31 UTC; threshold 6.0 mm/s. Recommend reducing load and inspecting mount.', when: '14:31', cat: 'Vibration' },
+    { sev: 'danger', src: '02.1.010', title: 'Engine Mount Stbd AFT — vibration above threshold', body: '8.2 mm/s observed at 14:31 UTC; threshold 6.0 mm/s. Recommend reducing load and inspecting mount.', when: '14:31', cat: 'Vibration' },
     { sev: 'warn', src: '04.4.003', title: 'Bilge Lazarette — water level rising', body: 'Trend shows +12 mm over last 30 min. Below alarm level but above normal.', when: '13:48', cat: 'Bilge' },
-    { sev: 'warn', src: '03.1.005', title: 'Emergency Generator preheat fault', body: 'During weekly auto-test, preheat circuit reported low voltage. Engine started on second attempt.', when: '12:02', cat: 'Electrical' },
+    { sev: 'warn', src: '02.1.005', title: 'Emergency Generator preheat fault', body: 'During weekly auto-test, preheat circuit reported low voltage. Engine started on second attempt.', when: '12:02', cat: 'Electrical' },
   ];
   return (
     <div style={{flex: 1, overflowY: 'auto'}}>
@@ -221,7 +270,6 @@ window.UserAlerts = function UserAlerts() {
                   <div style={{fontSize: 12.5, color: 'var(--text-3)', textWrap: 'pretty'}}>{a.body}</div>
                   <div className="row" style={{marginTop: 10, gap: 8}}>
                     <button className="btn btn-sm">Acknowledge</button>
-                    <button className="btn btn-sm">Open in PMS</button>
                     <button className="btn btn-sm btn-ghost"><Icon name="chat" size={11} /> Ask AI about this</button>
                   </div>
                 </div>
@@ -236,10 +284,10 @@ window.UserAlerts = function UserAlerts() {
 
 window.UserPMS = function UserPMS() {
   const tasks = [
-    { sfi: '03.1.001', t: '500h Service — ME Port', due: 'Overdue · 4d', sev: 'overdue', who: 'You' },
+    { sfi: '02.1.001', t: '500h Service — ME Port', due: 'Overdue · 4d', sev: 'overdue', who: 'You' },
     { sfi: '07.1.001', t: 'Watermaker membrane flush', due: 'Overdue · 2d', sev: 'overdue', who: 'You' },
-    { sfi: '03.1.003', t: 'Oil filter change — Gen 1', due: 'Due May 1', sev: 'soon', who: 'You' },
-    { sfi: '03.1.004', t: 'Oil filter change — Gen 2', due: 'Due May 1', sev: 'soon', who: 'You' },
+    { sfi: '02.1.003', t: 'Oil filter change — Gen 1', due: 'Due May 1', sev: 'soon', who: 'You' },
+    { sfi: '02.1.004', t: 'Oil filter change — Gen 2', due: 'Due May 1', sev: 'soon', who: 'You' },
     { sfi: '06.1.002', t: 'Chiller 2 refrigerant top-up', due: 'Due May 3', sev: 'soon', who: 'You' },
     { sfi: '08.1', t: 'Fire panel weekly test', due: 'Done · Apr 27', sev: 'done', who: 'You' },
   ];

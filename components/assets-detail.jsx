@@ -50,7 +50,7 @@ window.AssetDetailFull = function AssetDetailFull({ asset, onBack }) {
           <div className="crumb-line">
             <span>Sea Wolf X</span><Icon name="chevron-right" size={10} />
             <span className="mono">03</span><span>Machinery</span><Icon name="chevron-right" size={10} />
-            <span className="mono">03.1</span><span>Engines & Generators</span><Icon name="chevron-right" size={10} />
+            <span className="mono">02.1</span><span>Engines & Generators</span><Icon name="chevron-right" size={10} />
             <span className="mono" style={{color: 'var(--text-1)'}}>{asset.sfi}</span>
           </div>
           <div className="asset-hero-title">

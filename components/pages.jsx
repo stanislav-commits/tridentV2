@@ -1,5 +1,5 @@
-/* global React, Icon */
-const { useState: usMisc } = React;
+/* global React, Icon, CERTIFICATE_GROUPS */
+const { useState: usMisc, useMemo: umMisc } = React;
 
 // ============ METRICS CATALOG ============
 window.MetricsPage = function MetricsPage() {
@@ -12,10 +12,10 @@ window.MetricsPage = function MetricsPage() {
     ['NMEA', 'environment.moon.angle::value', 'Measures the current angle of the moon relative to a reference point.', null, 'live'],
     ['NMEA', 'environment.moon.fraction::value', 'Represents the current visible fraction of the moon.', null, 'live'],
     ['NMEA', 'environment.moon.phaseName::value', 'Indicates the current phase of the moon as a descriptive name.', null, 'disabled'],
-    ['NMEA', 'engines.port.rpm', 'Main engine port RPM.', '03.1.001', 'live'],
-    ['NMEA', 'engines.port.coolant.temp', 'Coolant temperature, port main engine.', '03.1.001', 'live'],
-    ['NMEA', 'engines.port.fuel.rate', 'Fuel consumption rate, port main engine.', '03.1.001', 'live'],
-    ['NMEA', 'engines.stbd.rpm', 'Main engine starboard RPM.', '03.1.002', 'live'],
+    ['NMEA', 'engines.port.rpm', 'Main engine port RPM.', '02.1.001', 'live'],
+    ['NMEA', 'engines.port.coolant.temp', 'Coolant temperature, port main engine.', '02.1.001', 'live'],
+    ['NMEA', 'engines.port.fuel.rate', 'Fuel consumption rate, port main engine.', '02.1.001', 'live'],
+    ['NMEA', 'engines.stbd.rpm', 'Main engine starboard RPM.', '02.1.002', 'live'],
     ['NMEA', 'tanks.fuel.port.level', 'Fuel level in port main tank.', '02.4', 'live'],
     ['NMEA', 'tanks.fuel.stbd.level', 'Fuel level in starboard main tank.', '02.4', 'live'],
     ['NMEA', 'tanks.bilge.alarm', 'Bilge level alarm.', '04.4', 'live'],
@@ -103,12 +103,12 @@ window.UsersPage = function UsersPage() {
     { id: 'crew-047e06', name: 'Jogn Sina', role: 'Crew', ship: 'Sea Wolf X', lastSeen: '14m ago', twoFactor: 'OFF', status: 'Invite pending', initial: 'J' },
     { id: 'stanislav@trident-virtual.com', name: 'Stanislav', role: 'Admin', ship: '—', lastSeen: 'now', twoFactor: 'ON', status: 'Active', initial: 'S' },
   ];
-  const [users, setUsers] = uS(initialUsers);
-  const [query, setQuery] = uS('');
-  const [roleFilter, setRoleFilter] = uS('All');
-  const [showAdd, setShowAdd] = uS(false);
-  const [notice, setNotice] = uS('');
-  const [draft, setDraft] = uS({ name: '', id: '', role: 'Crew', ship: 'Sea Wolf X' });
+  const [users, setUsers] = usMisc(initialUsers);
+  const [query, setQuery] = usMisc('');
+  const [roleFilter, setRoleFilter] = usMisc('All');
+  const [showAdd, setShowAdd] = usMisc(false);
+  const [notice, setNotice] = usMisc('');
+  const [draft, setDraft] = usMisc({ name: '', id: '', role: 'Crew', ship: 'Sea Wolf X' });
 
   const filteredUsers = users.filter(user => {
     const matchesRole = roleFilter === 'All' || `${user.role}s` === roleFilter;
@@ -290,10 +290,10 @@ window.ShipsPage = function ShipsPage() {
 // ============ ALERTS ============
 window.AlertsPage = function AlertsPage() {
   const alerts = [
-    { sev: 'danger', src: '03.1.010', msg: 'Engine Mount Stbd AFT — vibration above threshold (8.2 mm/s)', when: '14:31:02', cat: 'Vibration' },
+    { sev: 'danger', src: '02.1.010', msg: 'Engine Mount Stbd AFT — vibration above threshold (8.2 mm/s)', when: '14:31:02', cat: 'Vibration' },
     { sev: 'warn', src: '04.4.003', msg: 'Bilge Lazarette — water level rising trend (last 30 min)', when: '13:48:11', cat: 'Bilge' },
-    { sev: 'warn', src: '03.1.005', msg: 'Emergency Generator — preheat circuit fault during weekly test', when: '12:02:54', cat: 'Electrical' },
-    { sev: 'info', src: '01', msg: 'Certificate IOPP expires in 62 days', when: '08:00:00', cat: 'Compliance' },
+    { sev: 'warn', src: '02.1.005', msg: 'Emergency Generator — preheat circuit fault during weekly test', when: '12:02:54', cat: 'Electrical' },
+    { sev: 'info', src: 'F01', msg: 'Certificate IOPP expires in 62 days', when: '08:00:00', cat: 'Compliance' },
     { sev: 'info', src: '06.1', msg: 'Chiller 2 — refrigerant pressure approaching low limit', when: 'Yesterday 22:14', cat: 'HVAC' },
   ];
   return (
@@ -330,23 +330,23 @@ window.AlertsPage = function AlertsPage() {
 window.PMSPage = function PMSPage() {
   const cols = [
     { id: 'overdue', title: 'Overdue', count: 3, color: 'var(--danger)', cards: [
-      { sfi: '03.1.001', t: '500h Service — ME Port', due: '−4d', who: 'Eng. M.', tags: ['Engines'] },
+      { sfi: '02.1.001', t: '500h Service — ME Port', due: '−4d', who: 'Eng. M.', tags: ['Engines'] },
       { sfi: '07.1.001', t: 'Watermaker membrane flush', due: '−2d', who: '—', tags: ['Watermaker'] },
       { sfi: '08.3.014', t: 'Extinguisher annual — Galley', due: '−1d', who: 'Eng. M.', tags: ['Safety'] },
     ]},
     { id: 'thisweek', title: 'Due this week', count: 7, color: 'var(--warn)', cards: [
-      { sfi: '03.1.003', t: 'Oil filter change — Gen 1', due: 'May 1', who: 'Eng. K.', tags: ['Generator'] },
-      { sfi: '03.1.004', t: 'Oil filter change — Gen 2', due: 'May 1', who: 'Eng. K.', tags: ['Generator'] },
+      { sfi: '02.1.003', t: 'Oil filter change — Gen 1', due: 'May 1', who: 'Eng. K.', tags: ['Generator'] },
+      { sfi: '02.1.004', t: 'Oil filter change — Gen 2', due: 'May 1', who: 'Eng. K.', tags: ['Generator'] },
       { sfi: '02.4', t: 'Fuel tank inspection', due: 'May 2', who: '—', tags: ['Tanks'] },
       { sfi: '06.1.002', t: 'Chiller 2 refrigerant top-up', due: 'May 3', who: 'Eng. M.', tags: ['HVAC'] },
     ]},
     { id: 'inprogress', title: 'In progress', count: 4, color: 'var(--info)', cards: [
-      { sfi: '03.1.005', t: 'Emergency Genset preheat circuit', due: 'started', who: 'Eng. M.', tags: ['Electrical'] },
+      { sfi: '02.1.005', t: 'Emergency Genset preheat circuit', due: 'started', who: 'Eng. M.', tags: ['Electrical'] },
       { sfi: '11.3.002', t: 'Hydraulic crane — annual', due: 'started', who: 'Bosun', tags: ['Deck'] },
     ]},
     { id: 'done', title: 'Done — last 7d', count: 14, color: 'var(--ok)', cards: [
-      { sfi: '03.1.001', t: 'Daily inspection', due: '✓ Apr 28', who: 'Eng. M.', tags: ['Engines'] },
-      { sfi: '03.1.002', t: 'Daily inspection', due: '✓ Apr 28', who: 'Eng. M.', tags: ['Engines'] },
+      { sfi: '02.1.001', t: 'Daily inspection', due: '✓ Apr 28', who: 'Eng. M.', tags: ['Engines'] },
+      { sfi: '02.1.002', t: 'Daily inspection', due: '✓ Apr 28', who: 'Eng. M.', tags: ['Engines'] },
       { sfi: '08.1', t: 'Fire panel test', due: '✓ Apr 27', who: 'Capt.', tags: ['Safety'] },
     ]},
   ];
@@ -390,6 +390,158 @@ window.PMSPage = function PMSPage() {
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+};
+
+// ============ CERTIFICATES ============
+window.CertificatesPage = function CertificatesPage() {
+  const groups = window.CERTIFICATE_GROUPS || [];
+  const [activeGroup, setActiveGroup] = usMisc('all');
+  const [query, setQuery] = usMisc('');
+  const [docs, setDocs] = usMisc({
+    A01: 'CERT_A01_Registry.pdf',
+    C05: 'CERT_C05_Safety_Equipment.pdf',
+    F01: 'CERT_F01_IOPP.pdf',
+    G01: 'CERT_G01_SMC.pdf',
+  });
+  const [issued, setIssued] = usMisc({
+    A01: '2024-04-21',
+    C05: '2025-02-15',
+    F01: '2024-06-30',
+    G01: '2025-03-01',
+  });
+  const [expires, setExpires] = usMisc({
+    A01: '2027-04-21',
+    C05: '2026-08-15',
+    F01: '2026-06-30',
+    G01: '2027-03-01',
+  });
+
+  const rows = umMisc(() => groups.flatMap(group => group.items.map(item => ({
+    ...item,
+    groupCode: group.code,
+    groupTitle: group.title,
+    section: group.section,
+    id: item.code || `${group.code}-${item.title}`,
+  }))), [groups]);
+
+  const certRows = rows.filter(row => row.kind !== 'section');
+  const filteredRows = rows.filter(row => {
+    const inGroup = activeGroup === 'all' || row.groupCode === activeGroup;
+    const haystack = `${row.code || ''} ${row.title} ${row.groupTitle} ${row.section || ''}`.toLowerCase();
+    return inGroup && haystack.includes(query.trim().toLowerCase());
+  });
+
+  const setValue = (setter, key, value) => setter(prev => ({ ...prev, [key]: value }));
+  const statusFor = (date) => {
+    if (!date) return { label: 'NO DATE', className: 'pill pill-soft', days: null };
+    const days = Math.ceil((new Date(`${date}T00:00:00`) - new Date()) / 86400000);
+    if (days < 0) return { label: 'EXPIRED', className: 'pill pill-danger', days };
+    if (days <= 90) return { label: `${days}D LEFT`, className: 'pill pill-warn', days };
+    return { label: 'VALID', className: 'pill pill-ok', days };
+  };
+
+  const stats = {
+    total: certRows.length,
+    withDocs: certRows.filter(row => docs[row.id]).length,
+    withDates: certRows.filter(row => issued[row.id] && expires[row.id]).length,
+    expiring: certRows.filter(row => {
+      const s = statusFor(expires[row.id]);
+      return s.days !== null && s.days >= 0 && s.days <= 90;
+    }).length,
+  };
+
+  return (
+    <div className="page">
+      <div className="page-header">
+        <div>
+          <h1 className="page-title">Certificates</h1>
+          <p className="page-subtitle">Full vessel certificate register with issue dates, expiry dates and linked document uploads.</p>
+        </div>
+        <div className="page-actions">
+          <button className="btn"><Icon name="download" size={13} /> Export</button>
+          <button className="btn btn-primary"><Icon name="plus" size={13} /> Add certificate</button>
+        </div>
+      </div>
+
+      <div className="cert-summary-grid">
+        <div className="mini-stat"><span>Total certificates</span><strong>{stats.total}</strong></div>
+        <div className="mini-stat"><span>Documents linked</span><strong>{stats.withDocs}</strong></div>
+        <div className="mini-stat"><span>Dated records</span><strong>{stats.withDates}</strong></div>
+        <div className="mini-stat"><span>Expiring soon</span><strong>{stats.expiring}</strong></div>
+      </div>
+
+      <div className="cert-layout">
+        <div className="card cert-groups">
+          <div className="cert-groups-head">Certificate groups</div>
+          <button className={`cert-group-btn ${activeGroup === 'all' ? 'active' : ''}`} onClick={() => setActiveGroup('all')}>
+            <span>All certificates</span>
+            <small>{stats.total}</small>
+          </button>
+          {groups.map(group => (
+            <button key={group.code} className={`cert-group-btn ${activeGroup === group.code ? 'active' : ''}`} onClick={() => setActiveGroup(group.code)}>
+              <span className="mono">{group.code}</span>
+              <span>{group.title}</span>
+              <small>{group.items.filter(item => item.kind !== 'section').length}</small>
+            </button>
+          ))}
+        </div>
+
+        <div className="card cert-register">
+          <div className="cert-toolbar">
+            <input className="input input-search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Search certificates..." />
+            <span className="text-3" style={{fontSize: 12}}>{filteredRows.filter(row => row.kind !== 'section').length} records</span>
+          </div>
+          <table className="dt cert-table">
+            <thead>
+              <tr>
+                <th style={{width: 88}}>Code</th>
+                <th>Certificate</th>
+                <th style={{width: 145}}>Issue date</th>
+                <th style={{width: 145}}>Expiry date</th>
+                <th style={{width: 190}}>Document</th>
+                <th style={{width: 110}}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRows.map(row => {
+                if (row.kind === 'section') {
+                  return <tr key={row.id} className="cert-section-row"><td colSpan="6">{row.title}</td></tr>;
+                }
+                const status = statusFor(expires[row.id]);
+                return (
+                  <tr key={row.id}>
+                    <td className="cell-mono">{row.code}</td>
+                    <td>
+                      {row.section && <div className="cert-section-label">{row.section}</div>}
+                      <div className="cell-strong">{row.title}</div>
+                      <div className="text-3" style={{fontSize: 11}}>{row.groupCode} · {row.groupTitle}</div>
+                    </td>
+                    <td>
+                      <input className="input cert-date-input mono" type="date" value={issued[row.id] || ''} onChange={event => setValue(setIssued, row.id, event.target.value)} />
+                    </td>
+                    <td>
+                      <input className="input cert-date-input mono" type="date" value={expires[row.id] || ''} onChange={event => setValue(setExpires, row.id, event.target.value)} />
+                    </td>
+                    <td>
+                      <label className="btn btn-sm cert-upload-btn">
+                        <Icon name="upload" size={11} /> {docs[row.id] ? 'Replace' : 'Upload'}
+                        <input type="file" accept=".pdf,.doc,.docx,.jpg,.png" onChange={event => setValue(setDocs, row.id, event.target.files?.[0]?.name || docs[row.id] || '')} />
+                      </label>
+                      {docs[row.id] ? <div className="cert-doc-name mono">{docs[row.id]}</div> : <div className="text-3" style={{fontSize: 11}}>No document</div>}
+                    </td>
+                    <td><span className={status.className}>{status.label}</span></td>
+                  </tr>
+                );
+              })}
+              {filteredRows.length === 0 && (
+                <tr><td colSpan="6" className="text-3" style={{padding: 18}}>No certificates match this search.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
@@ -477,7 +629,7 @@ window.AuditPage = function AuditPage() {
     ['2026-04-29 14:21:05', 'system', 'rag.index', 'Completed indexing CERT_SOLAS_2026.pdf — 18 chunks'],
     ['2026-04-29 13:48:32', 'system', 'alert.fire', 'Bilge Lazarette water level alarm'],
     ['2026-04-29 12:14:08', 'Capt. Aliyev', 'pms.close', 'Closed task #2018 — Oil filter Generator 1'],
-    ['2026-04-29 11:02:50', 'Stanislav', 'asset.link', 'Linked 12 manuals to SFI 03.1'],
+    ['2026-04-29 11:02:50', 'Stanislav', 'asset.link', 'Linked 12 manuals to SFI 02.1'],
     ['2026-04-29 09:18:00', 'Jogn Sina', 'auth.login', 'Login from 95.46.x.x'],
     ['2026-04-28 22:00:01', 'system', 'metric.sync', 'Synced 24 new metrics from NMEA bucket'],
     ['2026-04-28 18:44:21', 'Stanislav', 'user.reset', 'Reset password for crew-047e06'],
@@ -596,9 +748,9 @@ window.FinancePage = function FinancePage() {
           <thead><tr><th>Date</th><th>Vendor</th><th>Category</th><th>SFI</th><th style={{textAlign:'right'}}>Amount</th><th style={{width: 100}}>Status</th></tr></thead>
           <tbody>
             {[
-              ['2026-04-26','MTU Service Mediterranean','Spares','03.1.001','€4,212','paid'],
+              ['2026-04-26','MTU Service Mediterranean','Spares','02.1.001','€4,212','paid'],
               ['2026-04-22','Allios Bunker','Fuel','04.1','€18,940','paid'],
-              ['2026-04-19','MASE Generators','Service','03.1.003','€2,150','pending'],
+              ['2026-04-19','MASE Generators','Service','02.1.003','€2,150','pending'],
               ['2026-04-15','Bureau Veritas','Survey','01','€6,800','paid'],
             ].map((r,i) => (
               <tr key={i}>

@@ -3,8 +3,8 @@ const { useState: uAA, useMemo: uMAA } = React;
 
 window.AddAssetWizard = function AddAssetWizard({ onClose }) {
   const [step, setStep] = uAA(0);
-  const [parent, setParent] = uAA('03');
-  const [child, setChild] = uAA('03.1');
+  const [parent, setParent] = uAA('02');
+  const [child, setChild] = uAA('02.1');
   const [data, setData] = uAA({
     name: 'Genset Cooling Pump',
     mfr: 'Allweiler',

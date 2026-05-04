@@ -3,14 +3,14 @@ const { useState: uLM } = React;
 
 window.BulkLinkManualsModal = function BulkLinkManualsModal({ onClose }) {
   const initialMatches = [
-    { id: 1, doc: 'MN_MTU_16V_4000_M93L_Operating_Manual.pdf', meta: '12.4 MB · 412 chunks', conf: 96, sfi: '03.1', sfiName: 'Engines & Generators', asset: '03.1.001 Main Engine — Port', selected: true },
-    { id: 2, doc: 'MN_MTU_16V_4000_Service_Schedule_2026.pdf', meta: '4.1 MB · 188 chunks', conf: 94, sfi: '03.1', sfiName: 'Engines & Generators', asset: '03.1.001 Main Engine — Port', selected: true },
-    { id: 3, doc: 'MN_MASE_IS44_Operation.pdf', meta: '3.8 MB · 144 chunks', conf: 92, sfi: '03.1', sfiName: 'Engines & Generators', asset: '03.1.003 Generator 1 (Port)', selected: true },
-    { id: 4, doc: 'MN_VolvoPenta_D5A_T_Workshop.pdf', meta: '5.2 MB · 201 chunks', conf: 89, sfi: '03.1', sfiName: 'Engines & Generators', asset: '03.1.005 Emergency Generator', selected: true },
-    { id: 5, doc: 'MN_Allweiler_TRA_Pumps_2024.pdf', meta: '2.9 MB · 96 chunks', conf: 84, sfi: '03.1', sfiName: 'Engines & Generators', asset: '03.1.006 Day Tank Transfer Pump A', selected: true },
-    { id: 6, doc: 'CMP_Engine_Mount_AVM450_Datasheet.pdf', meta: '0.9 MB · 22 chunks', conf: 78, sfi: '03.1', sfiName: 'Engines & Generators', asset: '— group level only —', selected: true },
+    { id: 1, doc: 'MN_MTU_16V_4000_M93L_Operating_Manual.pdf', meta: '12.4 MB · 412 chunks', conf: 96, sfi: '02.1', sfiName: 'Engines & Generators', asset: '02.1.001 Main Engine — Port', selected: true },
+    { id: 2, doc: 'MN_MTU_16V_4000_Service_Schedule_2026.pdf', meta: '4.1 MB · 188 chunks', conf: 94, sfi: '02.1', sfiName: 'Engines & Generators', asset: '02.1.001 Main Engine — Port', selected: true },
+    { id: 3, doc: 'MN_MASE_IS44_Operation.pdf', meta: '3.8 MB · 144 chunks', conf: 92, sfi: '02.1', sfiName: 'Engines & Generators', asset: '02.1.003 Generator 1 (Port)', selected: true },
+    { id: 4, doc: 'MN_VolvoPenta_D5A_T_Workshop.pdf', meta: '5.2 MB · 201 chunks', conf: 89, sfi: '02.1', sfiName: 'Engines & Generators', asset: '02.1.005 Emergency Generator', selected: true },
+    { id: 5, doc: 'MN_Allweiler_TRA_Pumps_2024.pdf', meta: '2.9 MB · 96 chunks', conf: 84, sfi: '02.1', sfiName: 'Engines & Generators', asset: '02.1.006 Day Tank Transfer Pump A', selected: true },
+    { id: 6, doc: 'CMP_Engine_Mount_AVM450_Datasheet.pdf', meta: '0.9 MB · 22 chunks', conf: 78, sfi: '02.1', sfiName: 'Engines & Generators', asset: '— group level only —', selected: true },
     { id: 7, doc: 'Sea_Wolf_X_ER_Layout_Rev_C.pdf', meta: '1.4 MB · 38 chunks', conf: 62, sfi: '03', sfiName: 'Machinery — Propulsion', asset: '— group level only —', selected: true },
-    { id: 8, doc: 'Generic_Marine_Diesel_Troubleshooting_Guide.pdf', meta: '6.8 MB · 320 chunks', conf: 41, sfi: '03.1', sfiName: 'Engines & Generators', asset: '— group level only —', selected: false },
+    { id: 8, doc: 'Generic_Marine_Diesel_Troubleshooting_Guide.pdf', meta: '6.8 MB · 320 chunks', conf: 41, sfi: '02.1', sfiName: 'Engines & Generators', asset: '— group level only —', selected: false },
     { id: 9, doc: 'CrewSafetyBriefing_April_2026.pdf', meta: '0.6 MB · 14 chunks', conf: 12, sfi: null, sfiName: null, asset: null, selected: false },
     { id: 10, doc: 'Yard_Invoice_2026_Q1_Refit.pdf', meta: '2.1 MB · 60 chunks', conf: 8, sfi: null, sfiName: null, asset: null, selected: false },
   ];

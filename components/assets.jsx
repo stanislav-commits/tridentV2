@@ -2,9 +2,9 @@
 const { useState: usAR, useMemo: umAR } = React;
 
 window.AssetRegisterPage = function AssetRegisterPage() {
-  const [selected, setSelected] = usAR('03.1');
-  const [expanded, setExpanded] = usAR(new Set(['03', '04', '05', '08', '09']));
-  const [activeAsset, setActiveAsset] = usAR('03.1.001');
+  const [selected, setSelected] = usAR('02.1');
+  const [expanded, setExpanded] = usAR(new Set(['02', '03', '04', '07', '08']));
+  const [activeAsset, setActiveAsset] = usAR('02.1.001');
   const [activeTab, setActiveTab] = usAR('overview');
   const [search, setSearch] = usAR('');
   const [view, setView] = usAR('split'); // 'split' | 'full'
@@ -87,7 +87,7 @@ window.AssetRegisterPage = function AssetRegisterPage() {
         <div className="split-detail">
           <div className="detail-head">
             <div className="row gap-12">
-              <span className="detail-code mono">SFI 03.1</span>
+              <span className="detail-code mono">SFI 02.1</span>
               <span className="detail-title">Engines & Generators</span>
               <span style={{marginLeft: 'auto'}} className="row gap-12">
                 <button className="btn btn-sm"><Icon name="filter" size={12} /> Filter</button>

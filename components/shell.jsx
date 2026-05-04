@@ -24,24 +24,21 @@ window.AdminShell = function AdminShell({ active, setActive, children, mode, set
   };
 
   const navItems = [
-    { group: 'Operations', items: [
-      { id: 'dashboard', label: 'Overview', icon: 'dashboard' },
-      { id: 'alerts', label: 'Alerts', icon: 'alert', badge: 3 },
-      { id: 'audit', label: 'Audit log', icon: 'audit' },
-    ]},
     { group: 'Vessel data', items: [
       { id: 'assets', label: 'Asset Register', icon: 'asset', badge: '2.2k' },
+      { id: 'alerts', label: 'Alerts', icon: 'alert', badge: 3 },
+      { id: 'certificates', label: 'Certificates', icon: 'doc', badge: 181 },
       { id: 'metrics', label: 'Metrics catalog', icon: 'metrics', badge: '1.2k' },
       { id: 'kb', label: 'Knowledge Base', icon: 'kb', badge: 172 },
       { id: 'pms', label: 'PMS', icon: 'pms', badge: 18 },
-      { id: 'compliance', label: 'Compliance', icon: 'compliance' },
       { id: 'finance', label: 'Accounting', icon: 'finance' },
     ]},
     { group: 'People', items: [
-      { id: 'users', label: 'Users', icon: 'users' },
-      { id: 'crew', label: 'Crew & Watch', icon: 'crew' },
+      { id: 'users', label: 'Crew users', icon: 'users' },
     ]},
     { group: 'Platform', items: [
+      { id: 'adminUsers', label: 'Admin users', icon: 'users' },
+      { id: 'fleetManagers', label: 'Fleet managers', icon: 'users' },
       { id: 'rag', label: 'RAG / AI settings', icon: 'rag' },
     ]},
   ];
